@@ -1,3 +1,5 @@
 var puzzles = require('./puzzles.js');
+var helpers = require('./helpers.js');
 
-console.log(puzzles.getPuzzle());
+var puzzle = puzzles.getPuzzle();
+helpers.consoleWriter(puzzle.prompt);

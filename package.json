@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/jongrim/wargames-hangman/issues"
   },
-  "homepage": "https://github.com/jongrim/wargames-hangman#readme"
+  "homepage": "https://github.com/jongrim/wargames-hangman#readme",
+  "devDependencies": {
+    "webpack": "^2.5.1"
+  }
 }

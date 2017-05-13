@@ -14,6 +14,6 @@ body, html {
 
 .container {
     display: flex;
-    border: red 1px solid;
-    width: 80%;
+    flex-direction: column;
+    /*border: red 1px solid;*/
 }

@@ -1,0 +1,19 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: rgb(10, 10, 10);
+    font-family: monospace;
+    display: flex;
+    color: #f3f7bb;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    border: red 1px solid;
+    width: 80%;
+}

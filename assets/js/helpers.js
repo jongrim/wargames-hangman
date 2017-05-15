@@ -10,11 +10,13 @@ function consoleWriter(toWrite, elt) {
         } else if (n === undefined) {
             window.clearInterval(writer);
             return;
+        } else if (n === '.') {
+            n = '.<br>';
         } else {
             n = n.toUpperCase();
         }
         let message = s.concat(n);
-        elt.innerHTML = padSentence(message);
+        elt.innerHTML = createElement(message, 'p');
     }, 100);
 
     let getNextCharacter = function () {
@@ -25,9 +27,11 @@ function consoleWriter(toWrite, elt) {
         }
     }
 
-    let padSentence = function (message) {
-        return `<p>${message}</p>`;
-    }
+}
+
+function createElement (message, tag) {
+    return `<${tag}>${message}</${tag}>`;
 }
 
 exports.consoleWriter = consoleWriter;
+exports.createElement = createElement;

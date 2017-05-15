@@ -63,11 +63,220 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var puzzles = __webpack_require__(3);
+
+function Game () {
+    this.puzzle = puzzles.getPuzzle();
+    this.puzzlePrompt = this.puzzle.prompt;
+    this.puzzleHint = this.puzzle.hint;
+    this.puzzleAnswer = this.puzzle.answer;
+    this.guessesRemaining = 6;
+    this.lettersGuessed = [];
+    this.isOver = false;
+    this.finalMessage = '';
+
+    this.rewriteSolution = function () {
+        let result = '';
+        let ans = this.puzzleAnswer;
+        for (let i = 0; i < ans.length; i++) {
+            if (/[a-z]/i.test(ans[i])) {
+                if (this.lettersGuessed.indexOf(ans[i].toUpperCase()) > -1) {
+                    result = result.concat(`${ans[i]}&nbsp`);
+                } else {
+                    result = result.concat(`_&nbsp`);
+                }
+            } else {
+                if (ans[i] === ' ') {
+                    result = result.concat('&nbsp&nbsp');
+                } else {
+                    result = result.concat(`${ans[i]}&nbsp`);
+                }
+            }
+        }
+        return result;
+    }
+
+    this.solution = this.rewriteSolution();
+
+    this.addLetter = function (letter) {
+        this.lettersGuessed.push(letter.toUpperCase());
+    }
+
+    this.checkGameStatus = function () {
+        // game is over if no guesses remain or if puzzle has been solved
+        if (this.guessesRemaining <= 0) {
+            this.isOver = true;
+        }
+
+        if (!this.solution.includes('_')) {
+            this.isOver = true;
+        }
+    }
+
+    this.setFinalMessage = function () {
+        if (this.solution.includes('_')) {
+            this.finalMessage = "Missiles launched. Game Over.";
+        } else {
+            this.finalMessage = "Optimal solution found. How about a nice game of chess?";
+        }
+    }
+    
+    this.makeGuess = function (letter) {
+        // check if the letter has already been guessed
+        if (this.lettersGuessed.indexOf(letter.toUpperCase() > -1)) {
+            return;
+        }
+
+        // add letter to the guessed letters
+        this.addLetter(letter);
+
+        if (this.wordIncludes(this.puzzleAnswer, letter)) {
+            // update solution string
+            this.solution = this.rewriteSolution();
+        } else {
+            // decrease remaining guesses
+            this.guessesRemaining--;
+        }
+
+        // check game status
+        this.checkGameStatus();
+        if (this.isOver) {
+            this.setFinalMessage();
+        }
+
+    }
+
+    this.wordIncludes = function (word, letter) {
+        return word.toUpperCase().includes(letter.toUpperCase());
+    }
+}
+
+exports.Game = Game;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+function consoleWriter(toWrite, elt) {
+    // Takes the input string and writes it out at an interval
+    let curChar = 0
+
+    let writer = setInterval(function () {
+        let s = elt.innerText;
+        let n = getNextCharacter();
+        if (n === ' ') {
+            n = '&nbsp';
+        } else if (n === undefined) {
+            window.clearInterval(writer);
+            return;
+        } else if (n === '.') {
+            n = '.<br>';
+        } else {
+            n = n.toUpperCase();
+        }
+        let message = s.concat(n);
+        elt.innerHTML = createElement(message, 'p');
+    }, 100);
+
+    let getNextCharacter = function () {
+        if (curChar < toWrite.length) {
+            let nextChar = toWrite[curChar];
+            curChar++;
+            return nextChar;
+        }
+    }
+
+}
+
+function createElement (message, tag) {
+    return `<${tag}>${message}</${tag}>`;
+}
+
+exports.consoleWriter = consoleWriter;
+exports.createElement = createElement;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var helpers = __webpack_require__(1);
+var gameMaker = __webpack_require__(0);
+
+// DOM elements
+const body = document.body;
+const topContainer = document.querySelector('#topContainer');
+const bottomContainer = document.querySelector('#bottomContainer');
+const header = document.querySelector('#header');
+const prompt = document.querySelector('#prompt');
+const hint = document.querySelector('#hint');
+const solution = document.querySelector('#solution');
+const guesses = document.querySelector('#guesses');
+const letters = document.querySelector('#letters');
+const finalMessage = document.querySelector('#finalMessage');
+
+const introLine = "Greetings Professor Falken. Shall we play a game?";
+helpers.consoleWriter(introLine, topContainer);
+
+body.addEventListener('click', loadGame);
+body.addEventListener('keydown', loadGame);
+
+function loadGame() {
+    // remove prior event listeners to avoid loading the game over again
+    body.removeEventListener('click', loadGame);
+    body.removeEventListener('keydown', loadGame);
+
+    let game = new gameMaker.Game()
+    
+    function writeStats() {
+        solution.innerHTML = helpers.createElement(game.solution, 'p');
+        guesses.innerHTML = helpers.createElement(
+            `World destruction in: ${game.guessesRemaining}`, 'p'
+        );
+        letters.innerHTML = helpers.createElement(
+            game.lettersGuessed.join(' '), 'p'
+        );
+    }
+
+    // nextTurn function executes each turn of the game
+    function nextTurn(event) {
+        if (/^[a-z]{1}$/.test(event.key)) {
+            game.makeGuess(event.key);
+            writeStats();
+            if (game.isOver) {
+                endGame();
+                writeStats();
+            }
+        }
+    }
+
+    function endGame() {
+        finalMessage.innerHTML = helpers.createElement(game.finalMessage, 'p');
+        body.removeEventListener('keyup', nextTurn);
+    }
+
+    // new event listener to execute game turns
+    body.addEventListener('keyup', nextTurn);
+    
+    // set initial DOM values
+    topContainer.innerHTML = '';
+    header.innerHTML = helpers.createElement('WarGames Hangman', 'h1');
+    prompt.innerHTML = helpers.createElement(game.puzzlePrompt, 'p');
+    hint.innerHTML = helpers.createElement(game.puzzleHint, 'p');
+    writeStats();
+}
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
 /*
@@ -213,156 +422,6 @@ var puzzles = [
 
 exports.getPuzzle = function getPuzzle() {
     return puzzles[(Math.floor(Math.random() * puzzles.length))];
-}
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var puzzles = __webpack_require__(0);
-
-function Game () {
-    this.puzzle = puzzles.getPuzzle();
-    this.puzzlePrompt = this.puzzle.prompt;
-    this.puzzleHint = this.puzzle.hint;
-    this.puzzleAnswer = this.puzzle.answer;
-    this.guessesRemaining = 6;
-    this.lettersGuessed = [];
-    this.isOver = false;
-    this.finalMessage = '';
-
-    this.rewriteSolution = function () {
-        let result = '';
-        let ans = this.puzzleAnswer;
-        for (let i = 0; i < ans.length; i++) {
-            if (/[a-z]/i.test(ans[i])) {
-                if (ans[i] in this.lettersGuessed) {
-                    result = result.concat(`${ans[i]} `);
-                } else {
-                    result = result.concat(`_ `);
-                }
-            } else {
-                result = result.concat(`${ans[i]} `);
-            }
-        }
-        return result;
-    }
-    
-    this.solution = this.rewriteSolution();
-
-    this.addLetter = function (letter) {
-        this.lettersGuessed.push(letter);
-    }
-
-    this.checkGameStatus = function () {
-        // game is over if no guesses remain or if puzzle has been solved
-        if (this.guessesRemaining <= 0) {
-            this.isOver = true;
-        }
-
-        if (!this.solution.includes('_')) {
-            this.isOver = true;
-        }
-    }
-
-    this.setFinalMessage = function () {
-        if (this.contains('_')) {
-            this.finalMessage = "Sorry. You didn't find the answer.";
-        } else {
-            this.finalMessage = "Optimal solution found."
-        }
-    }
-    
-    this.makeGuess = function (letter) {
-        // check if the letter has already been guessed
-        if (letter in this.lettersGuessed) {
-            return;
-        }
-
-        // add letter to the guessed letters
-        this.addLetter(letter);
-
-        // decrease remaining guesses
-        this.guessesRemaining--;
-
-        // update solution string
-        this.solution = this.rewriteSolution();
-
-        // check game status
-        this.checkGameStatus();
-        if (this.isOver) {
-            this.setFinalMessage();
-        }
-
-        // write solution to DOM
-
-    }
-}
-
-exports.Game = Game;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-function consoleWriter(toWrite, elt) {
-    // Takes the input string and writes it out at an interval
-    let curChar = 0
-
-    let writer = setInterval(function () {
-        let s = elt.innerText;
-        let n = getNextCharacter();
-        if (n === ' ') {
-            n = '&nbsp';
-        } else if (n === undefined) {
-            window.clearInterval(writer);
-            return;
-        } else {
-            n = n.toUpperCase();
-        }
-        let message = s.concat(n);
-        elt.innerHTML = padSentence(message);
-    }, 100);
-
-    let getNextCharacter = function () {
-        if (curChar < toWrite.length) {
-            let nextChar = toWrite[curChar];
-            curChar++;
-            return nextChar;
-        }
-    }
-
-    let padSentence = function (message) {
-        return `<p>${message}</p>`;
-    }
-}
-
-exports.consoleWriter = consoleWriter;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var puzzles = __webpack_require__(0);
-var helpers = __webpack_require__(2);
-var gameMaker = __webpack_require__(1);
-
-// DOM elements
-const body = document.body;
-const container = document.querySelector('.container');
-
-const introLine = "Greetings Professor Falken. Shall we play a game?"
-helpers.consoleWriter(introLine, container);
-
-body.addEventListener('click', loadGame);
-body.addEventListener('keydown', loadGame);
-
-function loadGame() {
-    let game = new gameMaker.Game()
-    console.log(game);
 }
 
 

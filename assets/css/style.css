@@ -9,11 +9,14 @@ body, html {
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    align-items: center;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     /*border: red 1px solid;*/
+}
+
+#bottomContainer > * {
+    text-align: center;
 }

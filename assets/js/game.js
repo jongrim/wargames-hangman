@@ -15,22 +15,26 @@ function Game () {
         let ans = this.puzzleAnswer;
         for (let i = 0; i < ans.length; i++) {
             if (/[a-z]/i.test(ans[i])) {
-                if (ans[i] in this.lettersGuessed) {
-                    result = result.concat(`${ans[i]} `);
+                if (this.lettersGuessed.indexOf(ans[i].toUpperCase()) > -1) {
+                    result = result.concat(`${ans[i]}&nbsp`);
                 } else {
-                    result = result.concat(`_ `);
+                    result = result.concat(`_&nbsp`);
                 }
             } else {
-                result = result.concat(`${ans[i]} `);
+                if (ans[i] === ' ') {
+                    result = result.concat('&nbsp&nbsp');
+                } else {
+                    result = result.concat(`${ans[i]}&nbsp`);
+                }
             }
         }
         return result;
     }
-    
+
     this.solution = this.rewriteSolution();
 
     this.addLetter = function (letter) {
-        this.lettersGuessed.push(letter);
+        this.lettersGuessed.push(letter.toUpperCase());
     }
 
     this.checkGameStatus = function () {
@@ -45,27 +49,29 @@ function Game () {
     }
 
     this.setFinalMessage = function () {
-        if (this.contains('_')) {
-            this.finalMessage = "Sorry. You didn't find the answer.";
+        if (this.solution.includes('_')) {
+            this.finalMessage = "Missiles launched. Game Over.";
         } else {
-            this.finalMessage = "Optimal solution found."
+            this.finalMessage = "Optimal solution found. How about a nice game of chess?";
         }
     }
     
     this.makeGuess = function (letter) {
         // check if the letter has already been guessed
-        if (letter in this.lettersGuessed) {
+        if (this.lettersGuessed.indexOf(letter.toUpperCase() > -1)) {
             return;
         }
 
         // add letter to the guessed letters
         this.addLetter(letter);
 
-        // decrease remaining guesses
-        this.guessesRemaining--;
-
-        // update solution string
-        this.solution = this.rewriteSolution();
+        if (this.wordIncludes(this.puzzleAnswer, letter)) {
+            // update solution string
+            this.solution = this.rewriteSolution();
+        } else {
+            // decrease remaining guesses
+            this.guessesRemaining--;
+        }
 
         // check game status
         this.checkGameStatus();
@@ -73,8 +79,10 @@ function Game () {
             this.setFinalMessage();
         }
 
-        // write solution to DOM
+    }
 
+    this.wordIncludes = function (word, letter) {
+        return word.toUpperCase().includes(letter.toUpperCase());
     }
 }
 

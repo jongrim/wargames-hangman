@@ -58,7 +58,7 @@ function Game () {
     
     this.makeGuess = function (letter) {
         // check if the letter has already been guessed
-        if (this.lettersGuessed.indexOf(letter.toUpperCase() > -1)) {
+        if (this.lettersGuessed.indexOf(letter.toUpperCase()) > -1) {
             return;
         }
 

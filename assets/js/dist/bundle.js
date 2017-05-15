@@ -130,7 +130,7 @@ function Game () {
     
     this.makeGuess = function (letter) {
         // check if the letter has already been guessed
-        if (this.lettersGuessed.indexOf(letter.toUpperCase() > -1)) {
+        if (this.lettersGuessed.indexOf(letter.toUpperCase()) > -1) {
             return;
         }
 
@@ -166,34 +166,35 @@ exports.Game = Game;
 /***/ (function(module, exports) {
 
 function consoleWriter(toWrite, elt) {
-    // Takes the input string and writes it out at an interval
-    let curChar = 0
+    return new Promise(function (resolve, reject) {
+        // Takes the input string and writes it out at an interval
+        let curChar = 0
 
-    let writer = setInterval(function () {
-        let s = elt.innerText;
-        let n = getNextCharacter();
-        if (n === ' ') {
-            n = '&nbsp';
-        } else if (n === undefined) {
-            window.clearInterval(writer);
-            return;
-        } else if (n === '.') {
-            n = '.<br>';
-        } else {
-            n = n.toUpperCase();
+        let writer = setInterval(function () {
+            let s = elt.innerText;
+            let n = getNextCharacter();
+            if (n === ' ') {
+                n = '&nbsp';
+            } else if (n === undefined) {
+                window.clearInterval(writer);
+                resolve();
+                return;
+            } else {
+                n = n.toUpperCase();
+            }
+            let message = s.concat(n);
+            elt.innerHTML = createElement(message, 'p');
+        }, 100);
+
+        
+        let getNextCharacter = function () {
+            if (curChar < toWrite.length) {
+                let nextChar = toWrite[curChar];
+                curChar++;
+                return nextChar;
+            }
         }
-        let message = s.concat(n);
-        elt.innerHTML = createElement(message, 'p');
-    }, 100);
-
-    let getNextCharacter = function () {
-        if (curChar < toWrite.length) {
-            let nextChar = toWrite[curChar];
-            curChar++;
-            return nextChar;
-        }
-    }
-
+    });
 }
 
 function createElement (message, tag) {
@@ -213,8 +214,8 @@ var gameMaker = __webpack_require__(0);
 
 // DOM elements
 const body = document.body;
-const topContainer = document.querySelector('#topContainer');
-const bottomContainer = document.querySelector('#bottomContainer');
+const intro1 = document.querySelector('#intro1');
+const intro2 = document.querySelector('#intro2');
 const header = document.querySelector('#header');
 const prompt = document.querySelector('#prompt');
 const hint = document.querySelector('#hint');
@@ -222,9 +223,13 @@ const solution = document.querySelector('#solution');
 const guesses = document.querySelector('#guesses');
 const letters = document.querySelector('#letters');
 const finalMessage = document.querySelector('#finalMessage');
+const playAgain = document.querySelector('#playAgain');
 
-const introLine = "Greetings Professor Falken. Shall we play a game?";
-helpers.consoleWriter(introLine, topContainer);
+const introLine = "Greetings Professor Falken."
+const introLine2 = "Shall we play a game? ";
+helpers.consoleWriter(introLine, intro1).then(function () {
+    helpers.consoleWriter(introLine2, intro2);
+});
 
 body.addEventListener('click', loadGame);
 body.addEventListener('keydown', loadGame);
@@ -233,6 +238,10 @@ function loadGame() {
     // remove prior event listeners to avoid loading the game over again
     body.removeEventListener('click', loadGame);
     body.removeEventListener('keydown', loadGame);
+
+    // make sure the end game divs are clear
+    finalMessage.innerHTML = '';
+    playAgain.innerHTML = '';
 
     let game = new gameMaker.Game()
     
@@ -259,15 +268,22 @@ function loadGame() {
     }
 
     function endGame() {
-        finalMessage.innerHTML = helpers.createElement(game.finalMessage, 'p');
-        body.removeEventListener('keyup', nextTurn);
+        helpers.consoleWriter(game.finalMessage, finalMessage)
+            .then(function () {
+                helpers.consoleWriter("Press any key to play again", playAgain);
+            }
+            );
+        body.removeEventListener('keydown', nextTurn);
+        body.addEventListener('keydown', loadGame);
+        
     }
 
     // new event listener to execute game turns
-    body.addEventListener('keyup', nextTurn);
+    body.addEventListener('keydown', nextTurn);
     
     // set initial DOM values
-    topContainer.innerHTML = '';
+    intro1.innerHTML = '';
+    intro2.innerHTML = '';
     header.innerHTML = helpers.createElement('WarGames Hangman', 'h1');
     prompt.innerHTML = helpers.createElement(game.puzzlePrompt, 'p');
     hint.innerHTML = helpers.createElement(game.puzzleHint, 'p');

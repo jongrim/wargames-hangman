@@ -7,14 +7,17 @@ body, html {
     display: flex;
     color: #f3f7bb;
     flex-direction: column;
-    justify-content: center;
+    /*justify-content: center;*/
     align-content: center;
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    /*border: red 1px solid;*/
+}
+
+#topContainer {
+    margin-top: 20%;
 }
 
 #bottomContainer > * {

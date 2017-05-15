@@ -1,16 +1,17 @@
-var puzzles = require('./puzzles.js');
 var helpers = require('./helpers.js');
+var gameMaker = require('./game.js');
 
 // DOM elements
 const body = document.body;
-const consolePrompt = document.querySelector('.console');
+const container = document.querySelector('.container');
 
 const introLine = "Greetings Professor Falken. Shall we play a game?"
-helpers.consoleWriter(introLine, consolePrompt);
+helpers.consoleWriter(introLine, container);
 
-body.addEventListener('onclick', loadGame);
+body.addEventListener('click', loadGame);
 body.addEventListener('keydown', loadGame);
 
 function loadGame() {
-    
+    let game = new gameMaker.Game()
+    console.log(game);
 }

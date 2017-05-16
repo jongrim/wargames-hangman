@@ -171,11 +171,9 @@ function consoleWriter(toWrite, elt) {
         let curChar = 0
 
         let writer = setInterval(function () {
-            let s = elt.innerText;
+            let s = elt.textContent;
             let n = getNextCharacter();
-            if (n === ' ') {
-                n = '&nbsp';
-            } else if (n === undefined) {
+            if (n === undefined) {
                 window.clearInterval(writer);
                 resolve();
                 return;
@@ -222,11 +220,12 @@ const hint = document.querySelector('#hint');
 const solution = document.querySelector('#solution');
 const guesses = document.querySelector('#guesses');
 const letters = document.querySelector('#letters');
-const finalMessage = document.querySelector('#finalMessage');
+const finalMessage1 = document.querySelector('#finalMessage1');
+const finalMessage2 = document.querySelector('#finalMessage2');
 const playAgain = document.querySelector('#playAgain');
 
-const introLine = "Greetings Professor Falken."
-const introLine2 = "Shall we play a game? ";
+const introLine = "Greetings Professor Falken.";
+const introLine2 = "Shall we play a game?";
 helpers.consoleWriter(introLine, intro1).then(function () {
     helpers.consoleWriter(introLine2, intro2);
 });
@@ -260,11 +259,15 @@ function loadGame() {
     }
 
     function endGame() {
-        helpers.consoleWriter(game.finalMessage, finalMessage)
+        let finalMessages = game.finalMessage.split('. ');
+        helpers.consoleWriter(finalMessages[0], finalMessage1)
             .then(function () {
-                helpers.consoleWriter("Press any key to play again", playAgain);
-            }
-            );
+                helpers.consoleWriter(finalMessages[1], finalMessage2)
+                    .then(function () {
+                        helpers.consoleWriter("Press any key to play again",
+                            playAgain);
+                    });
+            });
         body.removeEventListener('keydown', nextTurn);
         body.addEventListener('keydown', loadGame);
         
@@ -278,7 +281,8 @@ function loadGame() {
     body.addEventListener('keydown', nextTurn);
 
     // make sure the end game divs are clear
-    finalMessage.innerHTML = '';
+    finalMessage1.innerHTML = '';
+    finalMessage2.innerHTML = '';
     playAgain.innerHTML = '';
     
     // set initial DOM values

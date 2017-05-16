@@ -4,11 +4,9 @@ function consoleWriter(toWrite, elt) {
         let curChar = 0
 
         let writer = setInterval(function () {
-            let s = elt.innerText;
+            let s = elt.textContent;
             let n = getNextCharacter();
-            if (n === ' ') {
-                n = '&nbsp';
-            } else if (n === undefined) {
+            if (n === undefined) {
                 window.clearInterval(writer);
                 resolve();
                 return;

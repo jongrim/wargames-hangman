@@ -56,11 +56,13 @@ game.js defines one constructor function, `Game()`. Game objects have the follow
 helpers.js defines helper functions used by other components of the game. There are two functions defined and exported.
 
 `consoleWriter(toWrite, elt)`
+
 consoleWriter is a way of writing text to the screen as though it were being typed by a machine. The effect is achieved by passing a message, `toWrite`, to a setInterval function which strips down the input to then reprint it one character at a time. `elt` is the target element to which the message should be written. The inner HTML of the element is rewritten repeatedly with an expanding paragraph element.
 
 Because consoleWriter makes use of setInterval, it is asynchronous by nature. To enable delaying other code, such as writing a second message, a Promise object is returned and can be used.
 
 `createElement(message, tag)`
+
 createElement creates and returns an element of type `tag` containing `message`.
 
 ## hangman.js
@@ -69,3 +71,6 @@ This is the entrance point for the application, and as such, controls the flow o
 The game is run using the `loadGame()` function which creates a new `Game` object at start. loadGame declares three functions to advance gameplay: `writeStats()`, `nextTurn()`, `endGame()`. In order, `nextTurn()` is first called when a key is pressed by the user. If the key is a letter, then the local game object's `makeGuess` function is called. Following, `writeStats()` rewrites the game stats (solution, letters guessed, guesses remaining). The game status is then checked and if true, `endGame()` is called to display the final results and offer to start a new game.
 
 My goal while writing this module was to keep all gameflow logic here, while deferring to other modules for specific implementation of game mechanics such as making a guess or creating a puzzle.
+
+## Browser dependecy management
+The application was developed using Node so modules make use of `require` and `exports` to share code. To compile this for running in the browser, I use webpack to handle the dependencies and produce a single file, bundle.js.

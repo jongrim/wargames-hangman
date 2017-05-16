@@ -1,12 +1,3 @@
-/*
-The quotes module contains a list of quotes or items from the movie Wargames.
-The module is used by the main game module to retrieve an entry for each
-round of the game.
-
-Exported Methods:
-    getQuote: Retrieve a random quote from the stored array.
-*/
-
 class SimplePuzzle {
     constructor(prompt, hint, answer) {
         this._prompt = prompt;

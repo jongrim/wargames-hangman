@@ -1,5 +1,5 @@
 function consoleWriter(toWrite, elt) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         // Takes the input string and writes it out at an interval
         let curChar = 0
 

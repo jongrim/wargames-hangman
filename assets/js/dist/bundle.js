@@ -166,7 +166,7 @@ exports.Game = Game;
 /***/ (function(module, exports) {
 
 function consoleWriter(toWrite, elt) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         // Takes the input string and writes it out at an interval
         let curChar = 0
 
@@ -346,12 +346,6 @@ class ActorPuzzle extends SimplePuzzle {
     }
 }
 
-class ThingPuzzle extends SimplePuzzle {
-    constructor(hint, answer) {
-        super('Name the object', hint, answer);
-    }
-}
-
 class LocationPuzzle extends SimplePuzzle {
     constructor(hint, answer) {
         super('Name the location', hint, answer);
@@ -365,7 +359,7 @@ class TriviaPuzzle extends SimplePuzzle {
 }
 
 var puzzles = [
-    new SentencePuzzle('The only winning move is', 'not to play'),
+    new SentencePuzzle('The only winning move is', 'Not to play'),
     new CharacterPuzzle(
         "I'm a supercomputer who enjoys a nice game of chess",
         "WOPR"

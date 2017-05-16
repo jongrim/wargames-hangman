@@ -45,12 +45,6 @@ class ActorPuzzle extends SimplePuzzle {
     }
 }
 
-class ThingPuzzle extends SimplePuzzle {
-    constructor(hint, answer) {
-        super('Name the object', hint, answer);
-    }
-}
-
 class LocationPuzzle extends SimplePuzzle {
     constructor(hint, answer) {
         super('Name the location', hint, answer);
@@ -64,7 +58,7 @@ class TriviaPuzzle extends SimplePuzzle {
 }
 
 var puzzles = [
-    new SentencePuzzle('The only winning move is', 'not to play'),
+    new SentencePuzzle('The only winning move is', 'Not to play'),
     new CharacterPuzzle(
         "I'm a supercomputer who enjoys a nice game of chess",
         "WOPR"

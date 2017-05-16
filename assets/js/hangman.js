@@ -24,14 +24,6 @@ body.addEventListener('click', loadGame);
 body.addEventListener('keydown', loadGame);
 
 function loadGame() {
-    // remove prior event listeners to avoid loading the game over again
-    body.removeEventListener('click', loadGame);
-    body.removeEventListener('keydown', loadGame);
-
-    // make sure the end game divs are clear
-    finalMessage.innerHTML = '';
-    playAgain.innerHTML = '';
-
     let game = new gameMaker.Game()
     
     function writeStats() {
@@ -67,12 +59,20 @@ function loadGame() {
         
     }
 
+    // remove prior event listeners to avoid loading the game over again
+    body.removeEventListener('click', loadGame);
+    body.removeEventListener('keydown', loadGame);
+
     // new event listener to execute game turns
     body.addEventListener('keydown', nextTurn);
+
+    // make sure the end game divs are clear
+    finalMessage.innerHTML = '';
+    playAgain.innerHTML = '';
     
     // set initial DOM values
-    intro1.innerHTML = '';
-    intro2.innerHTML = '';
+    intro1.style.display = 'none';
+    intro2.style.display = 'none';
     header.innerHTML = helpers.createElement('WarGames Hangman', 'h1');
     prompt.innerHTML = helpers.createElement(game.puzzlePrompt, 'p');
     hint.innerHTML = helpers.createElement(game.puzzleHint, 'p');

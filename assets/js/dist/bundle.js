@@ -80,7 +80,7 @@ function Game () {
     this.guessesRemaining = 6;
     this.lettersGuessed = [];
     this.isOver = false;
-    this.finalMessage = '';
+    this.finalMessages = [];
 
     this.rewriteSolution = function () {
         let result = '';
@@ -122,9 +122,11 @@ function Game () {
 
     this.setFinalMessage = function () {
         if (this.solution.includes('_')) {
-            this.finalMessage = "Missiles launched. Game Over.";
+            this.finalMessages.push("Missiles launched.");
+            this.finalMessages.push("Game Over.");
         } else {
-            this.finalMessage = "Optimal solution found. How about a nice game of chess?";
+            this.finalMessages.push("Optimal solution found.");
+            this.finalMessages.push("How about a nice game of chess?");
         }
     }
     
@@ -237,6 +239,7 @@ function loadGame() {
     let game = new gameMaker.Game()
     
     function writeStats() {
+        // updates the changing game stats
         solution.innerHTML = helpers.createElement(game.solution, 'p');
         guesses.innerHTML = helpers.createElement(
             `World destruction in: ${game.guessesRemaining}`, 'p'
@@ -253,18 +256,17 @@ function loadGame() {
             writeStats();
             if (game.isOver) {
                 endGame();
-                writeStats();
             }
         }
     }
 
     function endGame() {
-        let finalMessages = game.finalMessage.split('. ');
+        let finalMessages = game.finalMessages
         helpers.consoleWriter(finalMessages[0], finalMessage1)
             .then(function () {
                 helpers.consoleWriter(finalMessages[1], finalMessage2)
                     .then(function () {
-                        helpers.consoleWriter("Press any key to play again",
+                        helpers.consoleWriter("Press any key to play again.",
                             playAgain);
                     });
             });

@@ -8,7 +8,7 @@ function Game () {
     this.guessesRemaining = 6;
     this.lettersGuessed = [];
     this.isOver = false;
-    this.finalMessage = '';
+    this.finalMessages = [];
 
     this.rewriteSolution = function () {
         let result = '';
@@ -50,9 +50,11 @@ function Game () {
 
     this.setFinalMessage = function () {
         if (this.solution.includes('_')) {
-            this.finalMessage = "Missiles launched. Game Over.";
+            this.finalMessages.push("Missiles launched.");
+            this.finalMessages.push("Game Over.");
         } else {
-            this.finalMessage = "Optimal solution found. How about a nice game of chess?";
+            this.finalMessages.push("Optimal solution found.");
+            this.finalMessages.push("How about a nice game of chess?");
         }
     }
     

@@ -28,6 +28,7 @@ function loadGame() {
     let game = new gameMaker.Game()
     
     function writeStats() {
+        // updates the changing game stats
         solution.innerHTML = helpers.createElement(game.solution, 'p');
         guesses.innerHTML = helpers.createElement(
             `World destruction in: ${game.guessesRemaining}`, 'p'
@@ -44,18 +45,17 @@ function loadGame() {
             writeStats();
             if (game.isOver) {
                 endGame();
-                writeStats();
             }
         }
     }
 
     function endGame() {
-        let finalMessages = game.finalMessage.split('. ');
+        let finalMessages = game.finalMessages
         helpers.consoleWriter(finalMessages[0], finalMessage1)
             .then(function () {
                 helpers.consoleWriter(finalMessages[1], finalMessage2)
                     .then(function () {
-                        helpers.consoleWriter("Press any key to play again",
+                        helpers.consoleWriter("Press any key to play again.",
                             playAgain);
                     });
             });

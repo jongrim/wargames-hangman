@@ -260,6 +260,13 @@ function loadGame() {
     }
 
     function endGame() {
+        // clear the message divs in case there was writing happening unseen
+        finalMessage1.innerHTML = '';
+        finalMessage1.style.display = 'block';
+        finalMessage2.innerHTML = '';
+        finalMessage2.style.display = 'block';
+        playAgain.innerHTML = '';
+        playAgain.style.display = 'block';
         let finalMessages = game.finalMessages
         helpers.consoleWriter(finalMessages[0], finalMessage1)
             .then(function () {
@@ -283,8 +290,11 @@ function loadGame() {
 
     // make sure the end game divs are clear
     finalMessage1.innerHTML = '';
+    finalMessage1.style.display = 'none';
     finalMessage2.innerHTML = '';
+    finalMessage2.style.display = 'none';
     playAgain.innerHTML = '';
+    playAgain.style.display = 'none';
     
     // set initial DOM values
     intro1.style.display = 'none';
